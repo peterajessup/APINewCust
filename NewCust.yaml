@@ -1,0 +1,97 @@
+swagger: '2.0'
+info:
+  title: newCustomer
+  x-ibm-name: newcustomer
+  version: 1.0.0
+schemes:
+  - https
+basePath: /newcustomer
+security:
+  - clientID: []
+securityDefinitions:
+  clientID:
+    type: apiKey
+    in: header
+    name: X-IBM-Client-Id
+x-ibm-configuration:
+  cors:
+    enabled: true
+  gateway: datapower-api-gateway
+  type: rest
+  phase: realized
+  enforced: true
+  testable: true
+  assembly:
+    execute:
+      - invoke:
+          title: invoke
+          version: 2.0.0
+          verb: keep
+          target-url: $(target-url)
+          follow-redirects: false
+          timeout: 10
+          parameter-control:
+            type: blacklist
+          header-control:
+            type: blacklist
+            values:
+              - ^X-IBM-Client-Id$
+          inject-proxy-headers: true
+    catch: []
+  properties:
+    target-url:
+      value: >-
+        http://icp-proxy.abcluster-9ea0e417b01c00eeb3f5cc7bdcadde61-0001.au-syd.containers.appdomain.cloud:30300/MQRT
+      description: The URL of the target service
+      encoded: false
+  application-authentication:
+    certificate: false
+  catalogs: {}
+definitions:
+  customer:
+    type: object
+    additionalProperties: false
+    properties:
+      Surname:
+        type: string
+        description: Last Name
+        example: Jones
+      Firstname:
+        type: string
+        example: Paul
+      Addrline1:
+        type: string
+        example: 1 Peyton Place
+      AddrLine2:
+        type: string
+        example: Jacksonville
+      City:
+        type: string
+        example: Sydney
+      State:
+        type: string
+        example: NSW
+      PostCode:
+        type: string
+        example: '2000'
+      Email:
+        type: string
+        example: pjones@gmail.com
+      Phone:
+        type: string
+        example: 0237463649
+paths:
+  /newcustv1.0:
+    parameters: []
+    post:
+      responses:
+        '200':
+          description: success
+          schema:
+            type: string
+      parameters:
+        - name: customer
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/customer'
